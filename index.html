@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Happy Diwali Wishes ✨</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top, #141628, #0b0c15);
+    color: #fff;
+    overflow: hidden;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 80px auto;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 0 40px rgba(255,215,0,0.15);
+    position: relative;
+    z-index: 5;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 3rem;
+    color: gold;
+    text-shadow: 0 0 20px #ffea00;
+    animation: glow 2s infinite alternate;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 10px gold; }
+    to { text-shadow: 0 0 30px orange; }
+  }
+
+  p.subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #ffd580;
+  }
+
+  textarea {
+    width: 100%;
+    height: 100px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    padding: 10px;
+    font-size: 1rem;
+    resize: none;
+  }
+
+  .btns {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  button {
+    background: gold;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px gold;
+  }
+
+  .preview {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #fff9d6;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  .rangoli {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    opacity: 0.3;
+  }
+
+  .floating-diya {
+    position: absolute;
+    bottom: -40px;
+    width: 50px;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-25px); }
+  }
+
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .music-toggle {
+    margin-top: 15px;
+    display: block;
+    text-align: center;
+    color: gold;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="container">
+  <h1>🪔 Happy Diwali!</h1>
+  <p class="subtitle">Light, laughter & love to you and your family.</p>
+
+  <textarea id="message">✨ Wishing You All a Very Happy Diwali! ✨
+May this festival of lights fill your life with joy, prosperity, and endless happiness.
+Let’s celebrate the triumph of light over darkness and good over evil.
+Have a safe, sparkling, and blissful Diwali! 🪔💫</textarea>
+
+  <div class="btns">
+    <button id="send">Send Wishes & Fireworks</button>
+    <button id="copy">Copy Message</button>
+    <button id="share">Share Message</button>
+  </div>
+
+  <div class="preview" id="preview" hidden></div>
+  <span class="music-toggle" id="musicToggle">🎶 Play Diwali Music</span>
+</div>
+
+<img src="https://cdn-icons-png.flaticon.com/512/3143/3143643.png" class="rangoli" alt="Rangoli">
+<img src="https://cdn-icons-png.flaticon.com/512/3143/3143643.png" class="floating-diya" style="left:10%;" />
+<img src="https://cdn-icons-png.flaticon.com/512/3143/3143643.png" class="floating-diya" style="left:80%; animation-delay:2s;" />
+
+<!-- 🔊 Add your local Diwali song here -->
+<audio id="bgMusic" loop autoplay>
+  <source src="d1.mp3" type="audio/mp3">
+</audio>
+
+<script>
+  const sendBtn = document.getElementById('send');
+  const copyBtn = document.getElementById('copy');
+  const shareBtn = document.getElementById('share');
+  const messageInput = document.getElementById('message');
+  const preview = document.getElementById('preview');
+  const musicToggle = document.getElementById('musicToggle');
+  const bgMusic = document.getElementById('bgMusic');
+
+  messageInput.addEventListener('input', () => {
+    preview.textContent = messageInput.value;
+  });
+  preview.textContent = messageInput.value;
+
+  sendBtn.addEventListener('click', () => {
+    createFirework();
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(messageInput.value);
+    copyBtn.textContent = 'Copied!';
+    setTimeout(()=> copyBtn.textContent='Copy Message', 1500);
+  });
+
+  shareBtn.addEventListener('click', async () => {
+    const text = messageInput.value;
+    if (navigator.share) {
+      await navigator.share({ title: 'Happy Diwali!', text });
+    } else {
+      await navigator.clipboard.writeText(text);
+      alert('Copied to clipboard (Share not supported on this device)');
+    }
+  });
+
+  musicToggle.addEventListener('click', () => {
+    if (bgMusic.paused) {
+      bgMusic.play();
+      musicToggle.textContent = '⏸ Pause Music';
+    } else {
+      bgMusic.pause();
+      musicToggle.textContent = '🎶 Play Diwali Music';
+    }
+  });
+
+  // Fireworks animation
+  const canvas = document.getElementById('fireworks');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  window.addEventListener('resize', ()=> {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+  });
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+
+  function createFirework() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height / 2;
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x, y,
+        color: `hsl(${Math.random()*360}, 100%, 60%)`,
+        radius: Math.random()*3,
+        alpha: 1,
+        vx: Math.random()*6 - 3,
+        vy: Math.random()*6 - 3
+      });
+    }
+  }
+
+  function animate() {
+    ctx.fillStyle = 'rgba(0,0,0,0.1)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    particles.forEach((p,i) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.01;
+      if (p.alpha <= 0) particles.splice(i,1);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(animate);
+  }
+  animate();
+</script>
+</body>
+</html>
